@@ -2,6 +2,8 @@
 const { check } = require("express-validator");
 const Admin = require('../models/Admin');
 const Member = require('../models/Member');
+
+// Admin signup validators
 const adminSignupValidators = [
     check("name")
         .trim()
@@ -39,6 +41,7 @@ const adminSignupValidators = [
         .withMessage("Password is required")
 ];
 
+// Member signup validators
 const memberSignupValidators = [
     check("name")
         .trim()
