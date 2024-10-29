@@ -1,10 +1,9 @@
 // ======= Express validator ======== //
 const { check } = require("express-validator");
-const Admin = require('../models/Admin');
-const Member = require('../models/Member');
+const User = require('../models/User');
 
 // Admin signup validators
-const adminSignupValidators = [
+const signupValidators = [
     check("name")
         .trim()
         .notEmpty()
@@ -16,7 +15,7 @@ const adminSignupValidators = [
         .withMessage("Email is required")
         .custom(async (value) => {
             try {
-              const user = await Admin.findOne({ email: value });
+                const user = await User.findOne({ email: value });
               if (user) {
                 throw new Error('E-mail already in use');
               }
@@ -34,6 +33,11 @@ const adminSignupValidators = [
         .withMessage("Invalid gender")
         .notEmpty()
         .withMessage("Gender is required"),
+    check("role")
+        .notEmpty()
+        .withMessage("Role is required")   
+        .isIn(["admin", "member"])
+        .withMessage("Invalid role"),
     check("password")
         .isLength({ min: 6 })
         .withMessage("Password must be at least 6 characters long")
@@ -41,37 +45,4 @@ const adminSignupValidators = [
         .withMessage("Password is required")
 ];
 
-// Member signup validators
-const memberSignupValidators = [
-    check("name")
-        .trim()
-        .notEmpty()
-        .withMessage("name is required"),
-    check("email")
-        .isEmail()
-        .withMessage("Invalid email address")
-        .notEmpty()
-        .withMessage("Email is required")
-        .custom(async (value) => {
-            try {
-              const user = await Member.findOne({ email: value });
-              if (user) {
-                throw new Error('E-mail already in use');
-              }
-            } catch (err) {
-                throw new Error(err);
-            }
-          }),
-    check("phone")
-        .isMobilePhone()
-        .withMessage("Invalid phone number")
-        .notEmpty()
-        .withMessage("Phone number is required"),
-    check("password")
-        .isLength({ min: 6 })
-        .withMessage("Password must be at least 6 characters long")
-        .notEmpty()
-        .withMessage("Password is required"),
-];
-
-module.exports = { adminSignupValidators, memberSignupValidators }
+module.exports = { signupValidators }

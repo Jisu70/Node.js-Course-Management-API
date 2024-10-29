@@ -1,12 +1,12 @@
 // routes/adminRoutes.js
 const express = require('express');
 const { createCourse, createExam, assignCourseToMember } = require('../controllers/adminController');
-const authMiddleware = require('../middleware/authMiddleware');
-const roleMiddleware = require('../middleware/roleMiddleware');
+const { authorizeUser } = require('../middleware/authMiddleware');
+const {  authorizeAdmin } = require('../middleware/roleMiddleware');
 const router = express.Router();
 
-router.use(authMiddleware);
-router.use(roleMiddleware('admin'));
+router.use(authorizeUser);
+router.use(authorizeAdmin);
 
 router.post('/courses', createCourse);
 router.post('/exams', createExam);

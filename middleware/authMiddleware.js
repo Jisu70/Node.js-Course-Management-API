@@ -1,14 +1,30 @@
-// middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
+const { UnauthorizedError, UnhandledError } = require('../libs/errorLib');
 
-module.exports = (req, res, next) => {
+/**
+ * This middleware function is used to authorize the user.
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
+const authorizeUser = (req, res, next) => {
     let { authorization } = req.headers;
-      let token = authorization.split(" ")[1];
+    if (!authorization) {
+      return next(new UnauthorizedError("Authorization token is required"));
+    }
+    let token = authorization.split(" ")[1];
+    if (!token) {
+      return next(new UnauthorizedError("Authorization token is required"));
+    }
     try {
         const verified = jwt.verify(token, process.env.JWT_SECRET);
         req.user = verified;
         next();
     } catch (error) {
-        res.status(400).send('Invalid Token');
+        console.log(error);
+        next(new UnhandledError("Authorization token is invalid"));
     }
 };
+
+module.exports = { authorizeUser };

@@ -1,16 +1,22 @@
 // routes/authRoutes.js
 const express = require('express');
 const router = express.Router(); 
-const { registerAdmin, loginAdmin, registerMember, loginMember } = require('../controllers/authController');
+const { registerAdmin,  registerMember,  login } = require('../controllers/authController');
 const { validationHandler } = require('../middleware/validationHandler');
-const { adminSignupValidators, memberSignupValidators } = require("../utils/validators");
+const { signupValidators } = require("../utils/validators");
+const {  authorizeAdmin } = require('../middleware/roleMiddleware');
+const { authorizeUser } = require('../middleware/authMiddleware');
 
 // Admin routes
-router.post('/admin/register', adminSignupValidators, validationHandler, registerAdmin);
-router.post('/admin/login', loginAdmin);
+router.post('/admin/register', signupValidators, validationHandler, registerAdmin);
 
-// Member routes
-router.post('/member/register', memberSignupValidators, validationHandler, registerMember);
-router.post('/member/login', loginMember);
+// Common Login
+router.post('/login', login)
+
+// From here it is admin protected routes
+router.use(authorizeUser);
+router.use(authorizeAdmin);
+
+router.post('/admin/member/register', signupValidators, validationHandler, registerMember);
 
 module.exports = router;

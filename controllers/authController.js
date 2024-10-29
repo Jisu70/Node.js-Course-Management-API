@@ -1,77 +1,79 @@
-// controllers/authController.js
-const Admin = require('../models/Admin');
 const Member = require('../models/Member');
+const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { DuplicateEntryError, UnhandledError, NotFoundError, UnauthorizedError, BadrequestError } = require("../libs/errorLib");
+const { UnhandledError, NotFoundError, UnauthorizedError, BadrequestError } = require("../libs/errorLib");
 const { sendSuccess } = require("../libs/responseLib");
 
+/**
+ *  This function is used to register an admin
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 exports.registerAdmin = async (req, res, next) => {
-    const { name, email, phone, gender, password } = req.body;
+    const { name, email, phone, gender, role, password } = req.body;
 
     try {
-        const existingAdmin = await Admin.findOne({ email });
-        if (existingAdmin) {
-            return next(new DuplicateEntryError('Admin already exists with this email.'));
+        if (role !== 'admin') {
+            return next(new BadrequestError('Invalid role.'));
         }
-
         const hashedPassword = await bcrypt.hash(password, 10);
-        const admin = new Admin({ name, email, phone, gender, password: hashedPassword });
+        const admin = new User({ name, email, phone, gender, role, password: hashedPassword });
         await admin.save();
         return sendSuccess(res, [], 'Admin registered successfully', 201);
     } catch (error) {
+        console.log('\x1b[31m', error);
         next(new UnhandledError('Error while creating admin.'));
     }
 };
 
-exports.loginAdmin = async (req, res, next) => {
-    const { email, password } = req.body;
-
-    try {
-        const admin = await Admin.findOne({ email });
-        if (!admin) return next(new NotFoundError('Admin not found.'));
-
-        const isMatch = await bcrypt.compare(password, admin.password);
-        if (!isMatch) return next(new UnauthorizedError('Invalid credentials.'));
-
-        const token = jwt.sign({ id: admin._id, role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        return sendSuccess(res, { token }, 'Login successful', 200);
-    } catch (error) {
-        next(new UnhandledError('Error while logging in.'));
-    }
-};
-
+/**
+ * This function is used to register a member and only admins can register members
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 exports.registerMember = async (req, res, next) => {
-    const { name, email, phone, password } = req.body;
+    const { name, email, phone, gender, role, password } = req.body;
 
     try {
-        const existingMember = await Member.findOne({ email });
-        if (existingMember) {
-            return next(new DuplicateEntryError('Member already exists with this email.'));
-        }
-
+        if (role !== 'member') {
+            return next(new BadrequestError('Invalid role.'));
+        };
         const hashedPassword = await bcrypt.hash(password, 10);
-        const member = new Member({ name, email, phone, password: hashedPassword });
+        const member = new User({ name, email, gender, phone, role, password: hashedPassword });
         await member.save();
         return sendSuccess(res, [], 'Member registered successfully', 201);
     } catch (error) {
+        console.log('\x1b[31m', error);
         next(new UnhandledError('Error while creating member.'));
     }
 };
 
-exports.loginMember = async (req, res, next) => {
+/**
+ * This function is used to login for both admin and member
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
+exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
     try {
-        const member = await Member.findOne({ email });
-        if (!member) return next(new NotFoundError('Member not found.'));
+        const user = await User.findOne({ email });
+        if (!user) return next(new NotFoundError('User not found.'));
 
-        const isMatch = await bcrypt.compare(password, member.password);
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return next(new UnauthorizedError('Invalid credentials.'));
 
-        const token = jwt.sign({ id: member._id, role: 'member' }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
         return sendSuccess(res, { token }, 'Login successful', 200);
     } catch (error) {
+        console.log(error);
         next(new UnhandledError('Error while logging in.'));
     }
 };

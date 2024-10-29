@@ -1,4 +1,4 @@
-// controllers/memberController.js
+
 const Course = require('../models/Course');
 
 exports.getCoursesForMember = async (req, res) => {
