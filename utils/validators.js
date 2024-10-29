@@ -45,4 +45,15 @@ const signupValidators = [
         .withMessage("Password is required")
 ];
 
-module.exports = { signupValidators }
+const submitExamAnswerValidators = [
+    check("examId")
+        .notEmpty()
+        .withMessage("Exam ID is required"),
+    check("answers")
+        .notEmpty()
+        .withMessage("Answers is required")
+        .isArray()
+        .withMessage("Answers must be an array of objects")
+]
+
+module.exports = { signupValidators, submitExamAnswerValidators }

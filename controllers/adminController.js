@@ -16,7 +16,7 @@ exports.createCourse = async (req, res, next) => {
     try {
         const course = new Course({ courseName, description });
         await course.save();
-        return sendSuccess(res, [], 'Course created successfully', 201);
+        return sendSuccess(res, course, 'Course created successfully', 201);
     } catch (error) {
         console.log('\x1b[31m', error);
         next(new UnhandledError('Error while creating course.'));
