@@ -1,5 +1,16 @@
 const mongoose = require('mongoose');
 
+const answerSchema = mongoose.Schema({
+    questionId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+    },
+    selectedOptionId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+    },
+});
+
 const resultSchema = mongoose.Schema({
     courseId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -13,17 +24,22 @@ const resultSchema = mongoose.Schema({
     },
     memberId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Member',
+        ref: 'User',
         required: true,
     },
     marksObtained: {
         type: Number,
         required: true,
     },
-    passed: {
+    totalMarks: {
+        type: Number,
+        required: true,
+    },
+    isPassed: {
         type: Boolean,
         required: true,
     },
+    answers: [answerSchema],
 }, {
     timestamps: true,
 });

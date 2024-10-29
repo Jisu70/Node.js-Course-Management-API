@@ -1,4 +1,3 @@
-const Member = require('../models/Member');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -73,7 +72,7 @@ exports.login = async (req, res, next) => {
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
         return sendSuccess(res, { token }, 'Login successful', 200);
     } catch (error) {
-        console.log(error);
+        console.log('\x1b[31m', error);
         next(new UnhandledError('Error while logging in.'));
     }
 };
