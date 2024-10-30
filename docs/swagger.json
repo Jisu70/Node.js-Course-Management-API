@@ -1,0 +1,435 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Node.js Course Management API",
+    "description": "API endpoints for managing courses, exams, and user authentication.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://{{baseurl}}"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "noauthAuth": {
+        "type": "http",
+        "scheme": "noauth"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication"
+    },
+    {
+      "name": "Admin"
+    },
+    {
+      "name": "Member"
+    }
+  ],
+  "paths": {
+    "/api/auth/admin/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Admin Register",
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string",
+                "example": "\"{\\r\\n  \\\"name\\\": \\\"John Doe\\\",\\r\\n  \\\"email\\\": \\\"superadmin@gmail.com\\\",\\r\\n  \\\"phone\\\": \\\"8609124483\\\",\\r\\n  \\\"gender\\\": \\\"male\\\",\\r\\n  \\\"role\\\" : \\\"admin\\\",\\r\\n  \\\"password\\\": \\\"Password#0\\\"\\r\\n}\\r\\n\""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Login",
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string",
+                "example": "\"{\\r\\n    \\\"email\\\": \\\"member@gmail.com\\\",\\r\\n    \\\"password\\\": \\\"Password#0\\\"\\r\\n}\""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/admin/member/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Member Register",
+        "description": "### Register New Member\n\nThis endpoint allows an admin user to register a new member.\n\n#### Request Body\n\n- `name`: (string) The name of the member.\n    \n- `email`: (string) The email address of the member.\n    \n- `phone`: (string) The phone number of the member.\n    \n- `gender`: (string) The gender of the member.\n    \n- `role`: (string) The role of the member.\n    \n- `password`: (string) The password for the member's account.\n    \n\nExample:\n\n``` json\n{\n  \"name\": \"Jane Smith\",\n  \"email\": \"member@gmail.com\",\n  \"phone\": \"1987654321\",\n  \"gender\": \"male\",\n  \"role\": \"member\",\n  \"password\": \"Password#0\"\n}\n#### Response\n- Status: 201 Created\n- Content-Type: application/json\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"memberId\": \"\"\n  },\n  \"message\": \"\"\n}\n\n ```",
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string",
+                "example": "\"{\\r\\n  \\\"name\\\": \\\"Jane Smith\\\",\\r\\n  \\\"email\\\": \\\"member@gmail.com\\\",\\r\\n  \\\"phone\\\": \\\"1987654321\\\",\\r\\n  \\\"gender\\\": \\\"male\\\",\\r\\n  \\\"role\\\" : \\\"member\\\",\\r\\n  \\\"password\\\": \\\"Password#0\\\"\\r\\n}\\r\\n\""
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/courses": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Create Course",
+        "description": "### Create a New Course\n\nThis endpoint allows administrators to create a new course.\n\n#### Request Body\n\n- courseName: (string) The name of the course.\n    \n- description: (string) A brief description of the course.\n    \n\n#### Response\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"success\": {\n      \"type\": \"boolean\"\n    },\n    \"data\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"courseName\": {\n          \"type\": \"string\"\n        },\n        \"description\": {\n          \"type\": \"string\"\n        },\n        \"assignedMembers\": {\n          \"type\": \"array\"\n        },\n        \"exams\": {\n          \"type\": \"array\"\n        },\n        \"_id\": {\n          \"type\": \"string\"\n        },\n        \"createdAt\": {\n          \"type\": \"string\"\n        },\n        \"updatedAt\": {\n          \"type\": \"string\"\n        },\n        \"__v\": {\n          \"type\": \"number\"\n        }\n      }\n    },\n    \"message\": {\n      \"type\": \"string\"\n    }\n  }\n}\n\n ```",
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string",
+                "example": "\"{\\r\\n  \\\"courseName\\\": \\\"Introduction to Programming\\\",\\r\\n  \\\"description\\\": \\\"A beginner-friendly course on the basics of programming, covering fundamental concepts and hands-on exercises.\\\"\\r\\n}\\r\\n\""
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{adminToken}}"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/exams": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Create Exam",
+        "description": "### Add New Exam\n\nThis endpoint allows administrators to create a new exam for a specific course.\n\n#### Request Body\n\n- `courseId` (string): The unique identifier of the course for which the exam is being created.\n    \n- `examName` (string): The name of the exam.\n    \n- `totalMarks` (number): The total marks for the exam.\n    \n- `passMarks` (number): The minimum marks required to pass the exam.\n    \n- `examDuration` (number): The duration of the exam in minutes.\n    \n- `questions` (array): An array of objects containing details about the questions in the exam.\n    \n    - `questionText` (string): The text of the question.\n        \n    - `options` (array): An array of objects containing details about the options for the question.\n        \n        - `optionText` (string): The text of the option.\n            \n        - `isCorrect` (boolean): Indicates whether the option is correct or not.\n            \n    - `marks` (number): The marks assigned to the question.\n        \n\n#### Response\n\nUpon successful creation, the server responds with a status code of 201 and a JSON object containing the newly created exam data.\n\n- `success` (boolean): Indicates whether the request was successful.\n    \n- `data` (object): Contains the details of the newly created exam.\n    \n    - `examName` (string): The name of the exam.\n        \n    - `totalMarks` (number): The total marks for the exam.\n        \n    - `passMarks` (number): The minimum marks required to pass the exam.\n        \n    - `examDuration` (number): The duration of the exam in minutes.\n        \n    - `questions` (array): An array of objects containing details about the questions in the exam.\n        \n        - `questionText` (string): The text of the question.\n            \n        - `options` (array): An array of objects containing details about the options for the question.\n            \n            - `optionText` (string): The text of the option.\n                \n            - `isCorrect` (boolean): Indicates whether the option is correct or not.\n                \n        - `marks` (number): The marks assigned to the question.\n            \n    - Other metadata fields such as `_id`, `createdAt`, `updatedAt`, and `__v`.\n        \n- `message` (string): A message from the server, if any.",
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string",
+                "example": "\"{\\r\\n  \\\"courseId\\\": \\\"672104ff12ec6cecfb0216a8\\\",\\r\\n  \\\"examName\\\": \\\"Introduction to Programming Final Exam\\\",\\r\\n  \\\"totalMarks\\\": 100,\\r\\n  \\\"passMarks\\\": 40,\\r\\n  \\\"examDuration\\\": 120,\\r\\n  \\\"questions\\\": [\\r\\n    {\\r\\n      \\\"questionText\\\": \\\"What is a variable?\\\",\\r\\n      \\\"options\\\": [\\r\\n        { \\\"optionText\\\": \\\"A value that changes\\\", \\\"isCorrect\\\": true },\\r\\n        { \\\"optionText\\\": \\\"A constant\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"A type of loop\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"A function\\\", \\\"isCorrect\\\": false }\\r\\n      ],\\r\\n      \\\"marks\\\": 20\\r\\n    },\\r\\n    {\\r\\n      \\\"questionText\\\": \\\"Which keyword is used to declare a constant in JavaScript?\\\",\\r\\n      \\\"options\\\": [\\r\\n        { \\\"optionText\\\": \\\"var\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"let\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"const\\\", \\\"isCorrect\\\": true },\\r\\n        { \\\"optionText\\\": \\\"static\\\", \\\"isCorrect\\\": false }\\r\\n      ],\\r\\n      \\\"marks\\\": 20\\r\\n    },\\r\\n    {\\r\\n      \\\"questionText\\\": \\\"What does 'HTML' stand for?\\\",\\r\\n      \\\"options\\\": [\\r\\n        { \\\"optionText\\\": \\\"Hyper Text Markup Language\\\", \\\"isCorrect\\\": true },\\r\\n        { \\\"optionText\\\": \\\"Home Tool Markup Language\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"Hyperlinks and Text Markup Language\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"Hyper Tool Markup Language\\\", \\\"isCorrect\\\": false }\\r\\n      ],\\r\\n      \\\"marks\\\": 20\\r\\n    },\\r\\n    {\\r\\n      \\\"questionText\\\": \\\"Which of these is a JavaScript framework?\\\",\\r\\n      \\\"options\\\": [\\r\\n        { \\\"optionText\\\": \\\"Django\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"Flask\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"React\\\", \\\"isCorrect\\\": true },\\r\\n        { \\\"optionText\\\": \\\"Laravel\\\", \\\"isCorrect\\\": false }\\r\\n      ],\\r\\n      \\\"marks\\\": 20\\r\\n    },\\r\\n    {\\r\\n      \\\"questionText\\\": \\\"What symbol is used to indicate an ID in CSS?\\\",\\r\\n      \\\"options\\\": [\\r\\n        { \\\"optionText\\\": \\\"#\\\", \\\"isCorrect\\\": true },\\r\\n        { \\\"optionText\\\": \\\".\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"@\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"*\\\", \\\"isCorrect\\\": false }\\r\\n      ],\\r\\n      \\\"marks\\\": 20\\r\\n    }\\r\\n  ]\\r\\n}\\r\\n\""
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{adminToken}}"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/assign-course": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Assign Course to Member",
+        "description": "### Assign Course to Member\n\nThis endpoint allows the admin to assign a course to a member.\n\n#### Request Body\n\n- `courseId` (string): The ID of the course to be assigned.\n    \n- `memberId` (string): The ID of the member to whom the course is to be assigned.\n    \n\n#### Response\n\nThe response is a JSON object with the following schema:\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"success\": {\n      \"type\": \"boolean\"\n    },\n    \"data\": {\n      \"type\": \"array\"\n    },\n    \"message\": {\n      \"type\": \"string\"\n    }\n  }\n}\n\n ```",
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string",
+                "example": "\"{\\r\\n    \\\"courseId\\\" : \\\"672104ff12ec6cecfb0216a8\\\",\\r\\n    \\\"memberId\\\" : \\\"6721098c583547590678df80\\\"\\r\\n}\""
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{adminToken}}"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/member/courses": {
+      "get": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Get Assigned Courses",
+        "description": "### API Request Description\n\nThis API endpoint sends an HTTP GET request to retrieve the list of courses for a member.\n\n### Request Body\n\nThis request does not require a request body.\n\n### Response Body\n\nThe response will be in JSON format with the following schema:\n\n``` json\n{\n  \"success\": boolean,\n  \"data\": [\n    {\n      \"_id\": string,\n      \"courseName\": string,\n      \"description\": string,\n      \"assignedMembers\": [string],\n      \"exams\": [\n        {\n          \"_id\": string,\n          \"examName\": string,\n          \"totalMarks\": number,\n          \"passMarks\": number,\n          \"examDuration\": number,\n          \"questions\": [\n            {\n              \"questionText\": string,\n              \"options\": [\n                {\n                  \"optionText\": string,\n                  \"isCorrect\": boolean,\n                  \"_id\": string\n                }\n              ],\n              \"marks\": number,\n              \"_id\": string\n            }\n          ],\n          \"createdAt\": string,\n          \"updatedAt\": string,\n          \"__v\": number\n        }\n      ],\n      \"createdAt\": string,\n      \"updatedAt\": string,\n      \"__v\": number\n    }\n  ],\n  \"message\": string\n}\n\n ```",
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{memberToken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/member/courses/{courseId}/exams": {
+      "get": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Get Exams for Course",
+        "description": "The endpoint retrieves a list of exams for a specific course belonging to a member.\n\nThe response returned is a JSON object with the following schema:\n\n``` json\n{\n    \"success\": boolean,\n    \"data\": [\n        {\n            \"_id\": string,\n            \"examName\": string,\n            \"totalMarks\": number,\n            \"passMarks\": number,\n            \"examDuration\": number,\n            \"questions\": [\n                {\n                    \"questionText\": string,\n                    \"options\": [\n                        {\n                            \"optionText\": string,\n                            \"isCorrect\": boolean,\n                            \"_id\": string\n                        }\n                    ],\n                    \"marks\": number,\n                    \"_id\": string\n                }\n            ],\n            \"createdAt\": string,\n            \"updatedAt\": string,\n            \"__v\": number\n        }\n    ],\n    \"message\": string\n}\n\n ```\n\nThis schema represents the structure of the response object when the request is successfully executed. The \"success\" field indicates whether the request was successful, and the \"data\" field contains an array of exam objects with details such as ID, name, total marks, pass marks, duration, questions, creation and update timestamps, and version. The \"message\" field may contain additional information or error messages.",
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{memberToken}}"
+          },
+          {
+            "name": "courseId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/member/exams/{examId}/submit": {
+      "post": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Submit Answer",
+        "description": "### Submit Exam Answers\n\nThis endpoint is used to submit the answers for a specific exam.\n\n#### Request\n\n- Method: POST\n    \n- URL: `{{baseUrl}}/api/member/exams/{{examId}}/submit`\n    \n- Body:\n    \n    - Type: JSON\n        \n    - Description: Payload containing the answers submitted by the member.\n        \n    - { \"answers\": \\[ { \"questionId\": \"string\", \"selectedOptionId\": \"string\" } \\]}\n        \n\n#### Response\n\nThe response for the request is a JSON object with the following schema:\n\n``` json\n{\n  \"success\": true,\n  \"data\": {\n    \"courseId\": \"string\",\n    \"examId\": \"string\",\n    \"memberId\": \"string\",\n    \"marksObtained\": 0,\n    \"totalMarks\": 0,\n    \"isPassed\": true,\n    \"answers\": [\n      {\n        \"questionId\": \"string\",\n        \"selectedOptionId\": \"string\",\n        \"_id\": \"string\"\n      }\n    ],\n    \"_id\": \"string\",\n    \"createdAt\": \"string\",\n    \"updatedAt\": \"string\",\n    \"__v\": 0\n  },\n  \"message\": \"string\"\n}\n\n ```\n\nThe response contains the submission details including marks obtained, total marks, and whether the member has passed the exam.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "answers": [
+                    {
+                      "questionId": "6721059612ec6cecfb0216ad",
+                      "selectedOptionId": "6721059612ec6cecfb0216ae"
+                    },
+                    {
+                      "questionId": "6721059612ec6cecfb0216b2",
+                      "selectedOptionId": "6721059612ec6cecfb0216b5"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{TOKEN}}"
+          },
+          {
+            "name": "examId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,3 @@
-// routes/adminRoutes.js
 const express = require('express');
 const { createCourse, createExam, assignCourseToMember } = require('../controllers/adminController');
 const { authorizeUser } = require('../middleware/authMiddleware');

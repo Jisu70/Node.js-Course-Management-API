@@ -1,5 +1,3 @@
-// errorHandler.js
-
 const { AppError } = require('../../libs/errorLib');
 
 function errorHandler(err, req, res, next) {

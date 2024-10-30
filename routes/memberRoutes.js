@@ -1,4 +1,3 @@
-// routes/memberRoutes.js
 const express = require('express');
 const router = express.Router();
 const { getCoursesForMember, getExamsForCourse, submitExamAnswer } = require('../controllers/memberController');
