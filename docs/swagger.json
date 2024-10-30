@@ -16,18 +16,16 @@
       }
     }
   ],
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
-      },
-      "noauthAuth": {
-        "type": "http",
-        "scheme": "noauth"
-      }
+"components": {
+  "securitySchemes": {
+    "bearerAuth": {
+      "type": "http",
+      "scheme": "bearer",
+      "bearerFormat": "JWT"
     }
-  },
+  }
+},
+
   "tags": [
     {
       "name": "Authentication"
@@ -152,13 +150,46 @@
           "Authentication"
         ],
         "summary": "Member Register",
-        "description": "### Register New Member\n\nThis endpoint allows an admin user to register a new member.\n\n#### Request Body\n\n- `name`: (string) The name of the member.\n    \n- `email`: (string) The email address of the member.\n    \n- `phone`: (string) The phone number of the member.\n    \n- `gender`: (string) The gender of the member.\n    \n- `role`: (string) The role of the member.\n    \n- `password`: (string) The password for the member's account.\n    \n\nExample:\n\n``` json\n{\n  \"name\": \"Jane Smith\",\n  \"email\": \"member@gmail.com\",\n  \"phone\": \"1987654321\",\n  \"gender\": \"male\",\n  \"role\": \"member\",\n  \"password\": \"Password#0\"\n}\n#### Response\n- Status: 201 Created\n- Content-Type: application/json\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"memberId\": \"\"\n  },\n  \"message\": \"\"\n}\n\n ```",
+        "description": "### Register New Member\n\nThis endpoint allows an admin user to register a new member.\n\n#### Request Body\n\n- `name`: (string) The name of the member.\n    \n- `email`: (string) The email address of the member.\n    \n- `phone`: (string) The phone number of the member.\n    \n- `gender`: (string) The gender of the member.\n    \n- `role`: (string) The role of the member.\n    \n- `password`: (string) The password for the member's account.\n\nExample:\n\n```json\n{\n  \"name\": \"Jane Smith\",\n  \"email\": \"member@gmail.com\",\n  \"phone\": \"1987654321\",\n  \"gender\": \"female\",\n  \"role\": \"member\",\n  \"password\": \"Password#0\"\n}\n```\n\n#### Response\n- Status: 201 Created\n- Content-Type: application/json\n\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"memberId\": \"12345\"\n  },\n  \"message\": \"Member registered successfully\"\n}\n```",
         "requestBody": {
           "content": {
-            "*/*": {
+            "application/json": {
               "schema": {
-                "type": "string",
-                "example": "\"{\\r\\n  \\\"name\\\": \\\"Jane Smith\\\",\\r\\n  \\\"email\\\": \\\"member@gmail.com\\\",\\r\\n  \\\"phone\\\": \\\"1987654321\\\",\\r\\n  \\\"gender\\\": \\\"male\\\",\\r\\n  \\\"role\\\" : \\\"member\\\",\\r\\n  \\\"password\\\": \\\"Password#0\\\"\\r\\n}\\r\\n\""
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Jane Smith"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "member@gmail.com"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": "1987654321"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "example": "female"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "member"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "Password#0"
+                  }
+                },
+                "example": {
+                  "name": "Jane Smith",
+                  "email": "member@gmail.com",
+                  "phone": "1987654321",
+                  "gender": "female",
+                  "role": "member",
+                  "password": "Password#0"
+                }
               }
             }
           }
@@ -179,10 +210,33 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "memberId": {
+                          "type": "string",
+                          "example": "12345"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Member registered successfully"
+                    }
+                  }
+                }
+              }
             }
           }
         }
