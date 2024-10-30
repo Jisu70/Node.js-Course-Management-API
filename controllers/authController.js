@@ -29,30 +29,6 @@ exports.registerAdmin = async (req, res, next) => {
 };
 
 /**
- * This function is used to register a member and only admins can register members
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
- * @returns 
- */
-exports.registerMember = async (req, res, next) => {
-    const { name, email, phone, gender, role, password } = req.body;
-
-    try {
-        if (role !== 'member') {
-            return next(new BadrequestError('Invalid role.'));
-        };
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const member = new User({ name, email, gender, phone, role, password: hashedPassword });
-        await member.save();
-        return sendSuccess(res, { memberId : member._id}, 'Member registered successfully', 201);
-    } catch (error) {
-        console.log('\x1b[31m', error);
-        next(new UnhandledError('Error while creating member.'));
-    }
-};
-
-/**
  * This function is used to login for both admin and member
  * @param {*} req 
  * @param {*} res 

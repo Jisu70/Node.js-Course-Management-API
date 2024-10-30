@@ -1,8 +1,9 @@
-const { UnhandledError, NotFoundError, UnauthorizedError, BadrequestError } = require("../libs/errorLib");
+const { UnhandledError, NotFoundError, BadrequestError } = require("../libs/errorLib");
 const { sendSuccess } = require("../libs/responseLib");
+const bcrypt = require('bcryptjs');
 const Course = require('../models/Course');
 const Exam = require('../models/Exam');
-
+const User = require('../models/User');
 /**
  * This function is used to create a course
  * @param {*} req 
@@ -76,3 +77,74 @@ exports.assignCourseToMember = async (req, res, next) => {
         next(new UnhandledError('Error while assigning course to member.'));
     }
 };
+/**
+ * This function is used to register a member and only admins can register members
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
+exports.registerMember = async (req, res, next) => {
+    const { name, email, phone, gender, role, password } = req.body;
+
+    try {
+        if (role !== 'member') {
+            return next(new BadrequestError('Invalid role.'));
+        };
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const member = new User({ name, email, gender, phone, role, password: hashedPassword });
+        await member.save();
+        return sendSuccess(res, { memberId : member._id}, 'Member registered successfully', 201);
+    } catch (error) {
+        console.log('\x1b[31m', error);
+        next(new UnhandledError('Error while creating member.'));
+    }
+};
+/**
+ * This function is used to get all members
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
+exports.getAllMembers = async (req, res, next) => {
+    try {
+        const members = await User.find({ role: 'member' }).select('-password');
+        return sendSuccess(res, members, 'Members fetched successfully', 200);
+    } catch (error) {
+        console.log('\x1b[31m', error);
+        next(new UnhandledError('Error while fetching members.'));
+    }
+}
+/**
+ * This function is used to get all courses
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
+exports.getAllCourses = async (req, res, next) => {
+    try {
+        const courses = await Course.find();
+        return sendSuccess(res, courses, 'Courses fetched successfully', 200);
+    } catch (error) {
+        console.log('\x1b[31m', error);
+        next(new UnhandledError('Error while fetching courses.'));
+    }
+}
+/**
+ * This function is used to get all exams
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
+exports.getAllExams = async (req, res, next) => {
+    try {
+        const exams = await Exam.find();
+        return sendSuccess(res, exams, 'Exams fetched successfully', 200);
+    } catch (error) {
+        console.log('\x1b[31m', error);
+        next(new UnhandledError('Error while fetching exams.'));
+    }
+}

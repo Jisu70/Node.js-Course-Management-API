@@ -16,16 +16,15 @@
       }
     }
   ],
-"components": {
-  "securitySchemes": {
-    "bearerAuth": {
-      "type": "http",
-      "scheme": "bearer",
-      "bearerFormat": "JWT"
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
     }
-  }
-},
-
+  },
   "tags": [
     {
       "name": "Authentication"
@@ -144,10 +143,10 @@
         }
       }
     },
-    "/api/auth/admin/member/register": {
+    "/api/admin/members": {
       "post": {
         "tags": [
-          "Authentication"
+          "Admin"
         ],
         "summary": "Member Register",
         "description": "### Register New Member\n\nThis endpoint allows an admin user to register a new member.\n\n#### Request Body\n\n- `name`: (string) The name of the member.\n    \n- `email`: (string) The email address of the member.\n    \n- `phone`: (string) The phone number of the member.\n    \n- `gender`: (string) The gender of the member.\n    \n- `role`: (string) The role of the member.\n    \n- `password`: (string) The password for the member's account.\n\nExample:\n\n```json\n{\n  \"name\": \"Jane Smith\",\n  \"email\": \"member@gmail.com\",\n  \"phone\": \"1987654321\",\n  \"gender\": \"female\",\n  \"role\": \"member\",\n  \"password\": \"Password#0\"\n}\n```\n\n#### Response\n- Status: 201 Created\n- Content-Type: application/json\n\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"memberId\": \"12345\"\n  },\n  \"message\": \"Member registered successfully\"\n}\n```",
@@ -201,6 +200,14 @@
         ],
         "parameters": [
           {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{adminToken}}"
+          },
+          {
             "name": "Content-Type",
             "in": "header",
             "schema": {
@@ -240,34 +247,23 @@
             }
           }
         }
-      }
-    },
-    "/api/admin/courses": {
-      "post": {
+      },
+      "get": {
         "tags": [
           "Admin"
         ],
-        "summary": "Create Course",
-        "description": "### Create a New Course\n\nThis endpoint allows administrators to create a new course.\n\n#### Request Body\n\n- courseName: (string) The name of the course.\n    \n- description: (string) A brief description of the course.\n    \n\n#### Response\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"success\": {\n      \"type\": \"boolean\"\n    },\n    \"data\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"courseName\": {\n          \"type\": \"string\"\n        },\n        \"description\": {\n          \"type\": \"string\"\n        },\n        \"assignedMembers\": {\n          \"type\": \"array\"\n        },\n        \"exams\": {\n          \"type\": \"array\"\n        },\n        \"_id\": {\n          \"type\": \"string\"\n        },\n        \"createdAt\": {\n          \"type\": \"string\"\n        },\n        \"updatedAt\": {\n          \"type\": \"string\"\n        },\n        \"__v\": {\n          \"type\": \"number\"\n        }\n      }\n    },\n    \"message\": {\n      \"type\": \"string\"\n    }\n  }\n}\n\n ```",
-        "requestBody": {
-          "content": {
-            "*/*": {
-              "schema": {
-                "type": "string",
-                "example": "\"{\\r\\n  \\\"courseName\\\": \\\"Introduction to Programming\\\",\\r\\n  \\\"description\\\": \\\"A beginner-friendly course on the basics of programming, covering fundamental concepts and hands-on exercises.\\\"\\r\\n}\\r\\n\""
-              }
-            }
-          }
-        },
+        "summary": "Get All Members",
+        "description": "### Retrieve Members\n\nThis endpoint allows administrators to retrieve a list of all members in the system.\n\n#### Parameters\n\n- No request body is needed for this endpoint.\n\n#### Security\n\n- Requires Bearer Token authentication.",
         "security": [
           {
-            "noauthAuth": []
+            "bearerAuth": []
           }
         ],
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "required": true,
             "schema": {
               "type": "string"
             },
@@ -284,9 +280,318 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Successful retrieval of members",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "memberId": {
+                            "type": "string",
+                            "example": "5f8f8f8f8f8f8f8f8f8f8f8"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Jane Smith"
+                          },
+                          "email": {
+                            "type": "string",
+                            "example": "jane.smith@gmail.com"
+                          },
+                          "phone": {
+                            "type": "string",
+                            "example": "1234567890"
+                          },
+                          "gender": {
+                            "type": "string",
+                            "example": "female"
+                          },
+                          "role": {
+                            "type": "string",
+                            "example": "member"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2023-01-01T00:00:00.000Z"
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Members retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized - Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/courses": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Create Course",
+        "description": "### Create a New Course\n\nThis endpoint allows administrators to create a new course.\n\n#### Request Body\n\n- `courseName`: (string) The name of the course.\n- `description`: (string) A brief description of the course.\n\n#### Response\n\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"courseName\": \"Introduction to Programming\",\n    \"description\": \"A beginner-friendly course...\",\n    \"assignedMembers\": [],\n    \"exams\": [],\n    \"_id\": \"61234abcd5678efgh\",\n    \"createdAt\": \"2023-01-01T00:00:00.000Z\",\n    \"updatedAt\": \"2023-01-01T00:00:00.000Z\",\n    \"__v\": 0\n  },\n  \"message\": \"Course created successfully\"\n}\n```",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "courseName": {
+                    "type": "string",
+                    "example": "Introduction to Programming"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "A beginner-friendly course on the basics of programming, covering fundamental concepts and hands-on exercises."
+                  }
+                },
+                "example": {
+                  "courseName": "Introduction to Programming",
+                  "description": "A beginner-friendly course on the basics of programming, covering fundamental concepts and hands-on exercises."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{adminToken}}"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Course created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "courseName": {
+                          "type": "string",
+                          "example": "Introduction to Programming"
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "A beginner-friendly course on programming"
+                        },
+                        "assignedMembers": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "exams": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "_id": {
+                          "type": "string",
+                          "example": "61234abcd5678efgh"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2023-01-01T00:00:00.000Z"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2023-01-01T00:00:00.000Z"
+                        },
+                        "__v": {
+                          "type": "integer",
+                          "example": 0
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Course created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get All Courses",
+        "description": "### Retrieve Courses\n\nThis endpoint allows administrators to retrieve a list of all available courses in the system.\n\n#### Security\n\n- Requires Bearer Token authentication.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{adminToken}}"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of courses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "courseId": {
+                            "type": "string",
+                            "example": "5f8f8f8f8f8f8f8f8f8f8f8"
+                          },
+                          "courseName": {
+                            "type": "string",
+                            "example": "Introduction to Programming"
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "A beginner-friendly course on the basics of programming."
+                          },
+                          "assignedMembers": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "example": "5f8f8f8f8f8f8f8f8f8f8f8"
+                            }
+                          },
+                          "exams": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "example": "60e4b6f8f8f8f8f8f8f8f8f8"
+                            }
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2023-01-01T00:00:00.000Z"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2023-01-10T00:00:00.000Z"
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Courses retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized - Invalid token"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -298,26 +603,319 @@
           "Admin"
         ],
         "summary": "Create Exam",
-        "description": "### Add New Exam\n\nThis endpoint allows administrators to create a new exam for a specific course.\n\n#### Request Body\n\n- `courseId` (string): The unique identifier of the course for which the exam is being created.\n    \n- `examName` (string): The name of the exam.\n    \n- `totalMarks` (number): The total marks for the exam.\n    \n- `passMarks` (number): The minimum marks required to pass the exam.\n    \n- `examDuration` (number): The duration of the exam in minutes.\n    \n- `questions` (array): An array of objects containing details about the questions in the exam.\n    \n    - `questionText` (string): The text of the question.\n        \n    - `options` (array): An array of objects containing details about the options for the question.\n        \n        - `optionText` (string): The text of the option.\n            \n        - `isCorrect` (boolean): Indicates whether the option is correct or not.\n            \n    - `marks` (number): The marks assigned to the question.\n        \n\n#### Response\n\nUpon successful creation, the server responds with a status code of 201 and a JSON object containing the newly created exam data.\n\n- `success` (boolean): Indicates whether the request was successful.\n    \n- `data` (object): Contains the details of the newly created exam.\n    \n    - `examName` (string): The name of the exam.\n        \n    - `totalMarks` (number): The total marks for the exam.\n        \n    - `passMarks` (number): The minimum marks required to pass the exam.\n        \n    - `examDuration` (number): The duration of the exam in minutes.\n        \n    - `questions` (array): An array of objects containing details about the questions in the exam.\n        \n        - `questionText` (string): The text of the question.\n            \n        - `options` (array): An array of objects containing details about the options for the question.\n            \n            - `optionText` (string): The text of the option.\n                \n            - `isCorrect` (boolean): Indicates whether the option is correct or not.\n                \n        - `marks` (number): The marks assigned to the question.\n            \n    - Other metadata fields such as `_id`, `createdAt`, `updatedAt`, and `__v`.\n        \n- `message` (string): A message from the server, if any.",
+        "description": "### Add New Exam\n\nThis endpoint allows administrators to create a new exam for a specific course.\n\n#### Request Body\n\n- `courseId` (string): The unique identifier of the course for which the exam is being created.\n- `examName` (string): The name of the exam.\n- `totalMarks` (number): The total marks for the exam.\n- `passMarks` (number): The minimum marks required to pass the exam.\n- `examDuration` (number): The duration of the exam in minutes.\n- `questions` (array): An array of objects containing details about the questions in the exam.\n- `questionText` (string): The text of the question.\n- `options` (array): An array of objects containing details about the options for the question.\n- `optionText` (string): The text of the option.\n- `isCorrect` (boolean): Indicates whether the option is correct.\n- `marks` (number): The marks assigned to the question.\n\n#### Response\n\nUpon successful creation, returns a status code of 201 and a JSON object with the newly created exam details.",
         "requestBody": {
           "content": {
-            "*/*": {
+            "application/json": {
               "schema": {
-                "type": "string",
-                "example": "\"{\\r\\n  \\\"courseId\\\": \\\"672104ff12ec6cecfb0216a8\\\",\\r\\n  \\\"examName\\\": \\\"Introduction to Programming Final Exam\\\",\\r\\n  \\\"totalMarks\\\": 100,\\r\\n  \\\"passMarks\\\": 40,\\r\\n  \\\"examDuration\\\": 120,\\r\\n  \\\"questions\\\": [\\r\\n    {\\r\\n      \\\"questionText\\\": \\\"What is a variable?\\\",\\r\\n      \\\"options\\\": [\\r\\n        { \\\"optionText\\\": \\\"A value that changes\\\", \\\"isCorrect\\\": true },\\r\\n        { \\\"optionText\\\": \\\"A constant\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"A type of loop\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"A function\\\", \\\"isCorrect\\\": false }\\r\\n      ],\\r\\n      \\\"marks\\\": 20\\r\\n    },\\r\\n    {\\r\\n      \\\"questionText\\\": \\\"Which keyword is used to declare a constant in JavaScript?\\\",\\r\\n      \\\"options\\\": [\\r\\n        { \\\"optionText\\\": \\\"var\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"let\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"const\\\", \\\"isCorrect\\\": true },\\r\\n        { \\\"optionText\\\": \\\"static\\\", \\\"isCorrect\\\": false }\\r\\n      ],\\r\\n      \\\"marks\\\": 20\\r\\n    },\\r\\n    {\\r\\n      \\\"questionText\\\": \\\"What does 'HTML' stand for?\\\",\\r\\n      \\\"options\\\": [\\r\\n        { \\\"optionText\\\": \\\"Hyper Text Markup Language\\\", \\\"isCorrect\\\": true },\\r\\n        { \\\"optionText\\\": \\\"Home Tool Markup Language\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"Hyperlinks and Text Markup Language\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"Hyper Tool Markup Language\\\", \\\"isCorrect\\\": false }\\r\\n      ],\\r\\n      \\\"marks\\\": 20\\r\\n    },\\r\\n    {\\r\\n      \\\"questionText\\\": \\\"Which of these is a JavaScript framework?\\\",\\r\\n      \\\"options\\\": [\\r\\n        { \\\"optionText\\\": \\\"Django\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"Flask\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"React\\\", \\\"isCorrect\\\": true },\\r\\n        { \\\"optionText\\\": \\\"Laravel\\\", \\\"isCorrect\\\": false }\\r\\n      ],\\r\\n      \\\"marks\\\": 20\\r\\n    },\\r\\n    {\\r\\n      \\\"questionText\\\": \\\"What symbol is used to indicate an ID in CSS?\\\",\\r\\n      \\\"options\\\": [\\r\\n        { \\\"optionText\\\": \\\"#\\\", \\\"isCorrect\\\": true },\\r\\n        { \\\"optionText\\\": \\\".\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"@\\\", \\\"isCorrect\\\": false },\\r\\n        { \\\"optionText\\\": \\\"*\\\", \\\"isCorrect\\\": false }\\r\\n      ],\\r\\n      \\\"marks\\\": 20\\r\\n    }\\r\\n  ]\\r\\n}\\r\\n\""
+                "type": "object",
+                "properties": {
+                  "courseId": {
+                    "type": "string",
+                    "example": "672104ff12ec6cecfb0216a8"
+                  },
+                  "examName": {
+                    "type": "string",
+                    "example": "Introduction to Programming Final Exam"
+                  },
+                  "totalMarks": {
+                    "type": "number",
+                    "example": 100
+                  },
+                  "passMarks": {
+                    "type": "number",
+                    "example": 40
+                  },
+                  "examDuration": {
+                    "type": "number",
+                    "example": 120
+                  },
+                  "questions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "questionText": {
+                          "type": "string",
+                          "example": "What is a variable?"
+                        },
+                        "options": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "optionText": {
+                                "type": "string",
+                                "example": "A value that changes"
+                              },
+                              "isCorrect": {
+                                "type": "boolean",
+                                "example": true
+                              }
+                            }
+                          }
+                        },
+                        "marks": {
+                          "type": "number",
+                          "example": 20
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "courseId": "672104ff12ec6cecfb0216a8",
+                  "examName": "Introduction to Programming Final Exam",
+                  "totalMarks": 100,
+                  "passMarks": 40,
+                  "examDuration": 120,
+                  "questions": [
+                    {
+                      "questionText": "What is a variable?",
+                      "options": [
+                        {
+                          "optionText": "A value that changes",
+                          "isCorrect": true
+                        },
+                        {
+                          "optionText": "A constant",
+                          "isCorrect": false
+                        },
+                        {
+                          "optionText": "A type of loop",
+                          "isCorrect": false
+                        },
+                        {
+                          "optionText": "A function",
+                          "isCorrect": false
+                        }
+                      ],
+                      "marks": 20
+                    },
+                    {
+                      "questionText": "Which keyword is used to declare a constant in JavaScript?",
+                      "options": [
+                        {
+                          "optionText": "var",
+                          "isCorrect": false
+                        },
+                        {
+                          "optionText": "let",
+                          "isCorrect": false
+                        },
+                        {
+                          "optionText": "const",
+                          "isCorrect": true
+                        },
+                        {
+                          "optionText": "static",
+                          "isCorrect": false
+                        }
+                      ],
+                      "marks": 20
+                    },
+                    {
+                      "questionText": "What does 'HTML' stand for?",
+                      "options": [
+                        {
+                          "optionText": "Hyper Text Markup Language",
+                          "isCorrect": true
+                        },
+                        {
+                          "optionText": "Home Tool Markup Language",
+                          "isCorrect": false
+                        },
+                        {
+                          "optionText": "Hyperlinks and Text Markup Language",
+                          "isCorrect": false
+                        },
+                        {
+                          "optionText": "Hyper Tool Markup Language",
+                          "isCorrect": false
+                        }
+                      ],
+                      "marks": 20
+                    },
+                    {
+                      "questionText": "Which of these is a JavaScript framework?",
+                      "options": [
+                        {
+                          "optionText": "Django",
+                          "isCorrect": false
+                        },
+                        {
+                          "optionText": "Flask",
+                          "isCorrect": false
+                        },
+                        {
+                          "optionText": "React",
+                          "isCorrect": true
+                        },
+                        {
+                          "optionText": "Laravel",
+                          "isCorrect": false
+                        }
+                      ],
+                      "marks": 20
+                    },
+                    {
+                      "questionText": "What symbol is used to indicate an ID in CSS?",
+                      "options": [
+                        {
+                          "optionText": "#",
+                          "isCorrect": true
+                        },
+                        {
+                          "optionText": ".",
+                          "isCorrect": false
+                        },
+                        {
+                          "optionText": "@",
+                          "isCorrect": false
+                        },
+                        {
+                          "optionText": "*",
+                          "isCorrect": false
+                        }
+                      ],
+                      "marks": 20
+                    }
+                  ]
+                }
               }
             }
           }
         },
         "security": [
           {
-            "noauthAuth": []
+            "bearerAuth": []
           }
         ],
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{adminToken}}"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Exam created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "examName": {
+                          "type": "string",
+                          "example": "Introduction to Programming Final Exam"
+                        },
+                        "totalMarks": {
+                          "type": "number",
+                          "example": 100
+                        },
+                        "passMarks": {
+                          "type": "number",
+                          "example": 40
+                        },
+                        "examDuration": {
+                          "type": "number",
+                          "example": 120
+                        },
+                        "questions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "questionText": {
+                                "type": "string",
+                                "example": "What is a variable?"
+                              },
+                              "options": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "optionText": {
+                                      "type": "string",
+                                      "example": "A value that changes"
+                                    },
+                                    "isCorrect": {
+                                      "type": "boolean",
+                                      "example": true
+                                    }
+                                  }
+                                }
+                              },
+                              "marks": {
+                                "type": "number",
+                                "example": 20
+                              }
+                            }
+                          }
+                        },
+                        "_id": {
+                          "type": "string",
+                          "example": "5f8f8f8f8f8f8f8f8f8f8f8"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2023-01-01T00:00:00.000Z"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2023-01-01T00:00:00.000Z"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Exam created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get All Exams",
+        "description": "### Retrieve Exams\n\nThis endpoint allows administrators to retrieve a list of all exams in the system.\n\n#### Security\n\n- Requires Bearer Token authentication.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
             "schema": {
               "type": "string"
             },
@@ -334,9 +932,80 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Successful retrieval of exams",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "examId": {
+                            "type": "string",
+                            "example": "5f8f8f8f8f8f8f8f8f8f8f8"
+                          },
+                          "examName": {
+                            "type": "string",
+                            "example": "Final Exam - Programming Basics"
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "A comprehensive exam on programming fundamentals."
+                          },
+                          "assignedCourses": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "example": "5f8f8f8f8f8f8f8f8f8f8f8"
+                            }
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2023-01-01T00:00:00.000Z"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2023-01-10T00:00:00.000Z"
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Exams retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized - Invalid token"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -351,23 +1020,27 @@
         "description": "### Assign Course to Member\n\nThis endpoint allows the admin to assign a course to a member.\n\n#### Request Body\n\n- `courseId` (string): The ID of the course to be assigned.\n    \n- `memberId` (string): The ID of the member to whom the course is to be assigned.\n    \n\n#### Response\n\nThe response is a JSON object with the following schema:\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"success\": {\n      \"type\": \"boolean\"\n    },\n    \"data\": {\n      \"type\": \"array\"\n    },\n    \"message\": {\n      \"type\": \"string\"\n    }\n  }\n}\n\n ```",
         "requestBody": {
           "content": {
-            "*/*": {
+            "application/json": {
               "schema": {
                 "type": "string",
-                "example": "\"{\\r\\n    \\\"courseId\\\" : \\\"672104ff12ec6cecfb0216a8\\\",\\r\\n    \\\"memberId\\\" : \\\"6721098c583547590678df80\\\"\\r\\n}\""
+                "example": {
+                  "courseId": "672104ff12ec6cecfb0216a8",
+                  "memberId": "6721098c583547590678df80"
+                }
               }
             }
           }
         },
         "security": [
           {
-            "noauthAuth": []
+            "bearerAuth": []
           }
         ],
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "required": true,
             "schema": {
               "type": "string"
             },
@@ -401,13 +1074,14 @@
         "description": "### API Request Description\n\nThis API endpoint sends an HTTP GET request to retrieve the list of courses for a member.\n\n### Request Body\n\nThis request does not require a request body.\n\n### Response Body\n\nThe response will be in JSON format with the following schema:\n\n``` json\n{\n  \"success\": boolean,\n  \"data\": [\n    {\n      \"_id\": string,\n      \"courseName\": string,\n      \"description\": string,\n      \"assignedMembers\": [string],\n      \"exams\": [\n        {\n          \"_id\": string,\n          \"examName\": string,\n          \"totalMarks\": number,\n          \"passMarks\": number,\n          \"examDuration\": number,\n          \"questions\": [\n            {\n              \"questionText\": string,\n              \"options\": [\n                {\n                  \"optionText\": string,\n                  \"isCorrect\": boolean,\n                  \"_id\": string\n                }\n              ],\n              \"marks\": number,\n              \"_id\": string\n            }\n          ],\n          \"createdAt\": string,\n          \"updatedAt\": string,\n          \"__v\": number\n        }\n      ],\n      \"createdAt\": string,\n      \"updatedAt\": string,\n      \"__v\": number\n    }\n  ],\n  \"message\": string\n}\n\n ```",
         "security": [
           {
-            "noauthAuth": []
+            "bearerAuth": []
           }
         ],
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "required": true,
             "schema": {
               "type": "string"
             },
@@ -418,7 +1092,123 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "type": "string"
+                          },
+                          "courseName": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "assignedMembers": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "exams": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "_id": {
+                                  "type": "string"
+                                },
+                                "examName": {
+                                  "type": "string"
+                                },
+                                "totalMarks": {
+                                  "type": "number"
+                                },
+                                "passMarks": {
+                                  "type": "number"
+                                },
+                                "examDuration": {
+                                  "type": "number"
+                                },
+                                "questions": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "questionText": {
+                                        "type": "string"
+                                      },
+                                      "options": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "optionText": {
+                                              "type": "string"
+                                            },
+                                            "isCorrect": {
+                                              "type": "boolean"
+                                            },
+                                            "_id": {
+                                              "type": "string"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "marks": {
+                                        "type": "number"
+                                      },
+                                      "_id": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "createdAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "updatedAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "__v": {
+                                  "type": "number"
+                                }
+                              }
+                            }
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "__v": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Courses retrieved successfully"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -433,13 +1223,14 @@
         "description": "The endpoint retrieves a list of exams for a specific course belonging to a member.\n\nThe response returned is a JSON object with the following schema:\n\n``` json\n{\n    \"success\": boolean,\n    \"data\": [\n        {\n            \"_id\": string,\n            \"examName\": string,\n            \"totalMarks\": number,\n            \"passMarks\": number,\n            \"examDuration\": number,\n            \"questions\": [\n                {\n                    \"questionText\": string,\n                    \"options\": [\n                        {\n                            \"optionText\": string,\n                            \"isCorrect\": boolean,\n                            \"_id\": string\n                        }\n                    ],\n                    \"marks\": number,\n                    \"_id\": string\n                }\n            ],\n            \"createdAt\": string,\n            \"updatedAt\": string,\n            \"__v\": number\n        }\n    ],\n    \"message\": string\n}\n\n ```\n\nThis schema represents the structure of the response object when the request is successfully executed. The \"success\" field indicates whether the request was successful, and the \"data\" field contains an array of exam objects with details such as ID, name, total marks, pass marks, duration, questions, creation and update timestamps, and version. The \"message\" field may contain additional information or error messages.",
         "security": [
           {
-            "noauthAuth": []
+            "bearerAuth": []
           }
         ],
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "required": true,
             "schema": {
               "type": "string"
             },
@@ -458,7 +1249,89 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "type": "string"
+                          },
+                          "examName": {
+                            "type": "string"
+                          },
+                          "totalMarks": {
+                            "type": "number"
+                          },
+                          "passMarks": {
+                            "type": "number"
+                          },
+                          "examDuration": {
+                            "type": "number"
+                          },
+                          "questions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "questionText": {
+                                  "type": "string"
+                                },
+                                "options": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "optionText": {
+                                        "type": "string"
+                                      },
+                                      "isCorrect": {
+                                        "type": "boolean"
+                                      },
+                                      "_id": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "marks": {
+                                  "type": "number"
+                                },
+                                "_id": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "__v": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Exams retrieved successfully"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -476,6 +1349,26 @@
             "application/json": {
               "schema": {
                 "type": "object",
+                "properties": {
+                  "answers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "questionId": {
+                          "type": "string"
+                        },
+                        "selectedOptionId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "questionId",
+                        "selectedOptionId"
+                      ]
+                    }
+                  }
+                },
                 "example": {
                   "answers": [
                     {
@@ -494,13 +1387,14 @@
         },
         "security": [
           {
-            "noauthAuth": []
+            "bearerAuth": []
           }
         ],
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
+            "required": true,
             "schema": {
               "type": "string"
             },
@@ -509,17 +1403,98 @@
           {
             "name": "examId",
             "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
-            },
-            "required": true
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "courseId": {
+                          "type": "string",
+                          "example": "courseId_example"
+                        },
+                        "examId": {
+                          "type": "string",
+                          "example": "examId_example"
+                        },
+                        "memberId": {
+                          "type": "string",
+                          "example": "memberId_example"
+                        },
+                        "marksObtained": {
+                          "type": "integer",
+                          "example": 85
+                        },
+                        "totalMarks": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "isPassed": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "answers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "questionId": {
+                                "type": "string",
+                                "example": "questionId_example"
+                              },
+                              "selectedOptionId": {
+                                "type": "string",
+                                "example": "selectedOptionId_example"
+                              },
+                              "_id": {
+                                "type": "string",
+                                "example": "answerId_example"
+                              }
+                            }
+                          }
+                        },
+                        "_id": {
+                          "type": "string",
+                          "example": "submissionId_example"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2024-01-01T00:00:00.000Z"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2024-01-01T00:00:00.000Z"
+                        },
+                        "__v": {
+                          "type": "integer",
+                          "example": 0
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Submission successful"
+                    }
+                  }
+                }
+              }
             }
           }
         }
