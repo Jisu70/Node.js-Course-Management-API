@@ -21,7 +21,7 @@ exports.registerAdmin = async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const admin = new User({ name, email, phone, gender, role, password: hashedPassword });
         await admin.save();
-        return sendSuccess(res, [], 'Admin registered successfully', 201);
+        return sendSuccess(res, { adminId : admin._id}, 'Admin registered successfully', 201);
     } catch (error) {
         console.log('\x1b[31m', error);
         next(new UnhandledError('Error while creating admin.'));
@@ -70,7 +70,7 @@ exports.login = async (req, res, next) => {
         if (!isMatch) return next(new UnauthorizedError('Invalid credentials.'));
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        return sendSuccess(res, { token }, 'Login successful', 200);
+        return sendSuccess(res, { token }, 'Logged in successfully', 200);
     } catch (error) {
         console.log('\x1b[31m', error);
         next(new UnhandledError('Error while logging in.'));

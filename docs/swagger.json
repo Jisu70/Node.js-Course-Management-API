@@ -7,7 +7,13 @@
   },
   "servers": [
     {
-      "url": "http://{{baseurl}}"
+      "url": "http://{baseurl}",
+      "variables": {
+        "baseurl": {
+          "default": "localhost:5000",
+          "description": "The base URL for API calls"
+        }
+      }
     }
   ],
   "components": {
@@ -42,10 +48,35 @@
         "summary": "Admin Register",
         "requestBody": {
           "content": {
-            "*/*": {
+            "application/json": {
               "schema": {
-                "type": "string",
-                "example": "\"{\\r\\n  \\\"name\\\": \\\"John Doe\\\",\\r\\n  \\\"email\\\": \\\"superadmin@gmail.com\\\",\\r\\n  \\\"phone\\\": \\\"8609124483\\\",\\r\\n  \\\"gender\\\": \\\"male\\\",\\r\\n  \\\"role\\\" : \\\"admin\\\",\\r\\n  \\\"password\\\": \\\"Password#0\\\"\\r\\n}\\r\\n\""
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "superadmin@gmail.com"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": "8609124483"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "example": "male"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "admin"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "Password#0"
+                  }
+                }
               }
             }
           }
@@ -78,10 +109,19 @@
         "summary": "Login",
         "requestBody": {
           "content": {
-            "*/*": {
+            "application/json": {
               "schema": {
-                "type": "string",
-                "example": "\"{\\r\\n    \\\"email\\\": \\\"member@gmail.com\\\",\\r\\n    \\\"password\\\": \\\"Password#0\\\"\\r\\n}\""
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "superadmin@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "Password#0"
+                  }
+                }
               }
             }
           }
