@@ -25,7 +25,7 @@
 ```plaintext
 MONGO_CONNECTION_STRING=mongodb://localhost:****  # Add your MongoDB connection string without trailing '/'
 JWT_SECRET=your_jwt_secret                        # Secret key for JWT token generation
-PORT=5000                                         # Define the port to run the server
+PORT=****                                         # Define the port to run the server
 ```
 ## scripts
 
@@ -40,7 +40,7 @@ PORT=5000                                         # Define the port to run the s
 ## API Documentation
 
 1. **Home Route** - Check if the project is running correctly:
-   - **GET** `http://localhost:5000/`
+   - **GET** `http://localhost:****/`
    - Expected response:
      ```json
      {
@@ -50,10 +50,10 @@ PORT=5000                                         # Define the port to run the s
      ```
 
 2. **Database Connection Check** - Verify if the MongoDB connection is successful:
-   - **GET** `http://localhost:5000/check-database-connection`
+   - **GET** `http://localhost:****/check-database-connection`
    - Expected response: `"Database connection successful!"`
 
-- Swagger Documentation : [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
+- Swagger Documentation : [http://localhost:****/api-docs](http://localhost:****/api-docs)
 
 ## Technologies Used
 
