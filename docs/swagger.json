@@ -1499,6 +1499,138 @@
           }
         }
       }
+    },
+    "/api/member/result/{examId}/": {
+      "get": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Get Exam Result",
+        "description": "### Get Exam Result\n\nThis endpoint retrieves the result of a specific exam for a member, including details on marks obtained, total marks, whether the member passed, and answer details.\n\n#### Request\n\n- Method: GET\n- URL: `{{baseUrl}}/api/member/result/{{examId}}`\n- This request does not require a request body.\n\n#### Response\n\nThe response will be a JSON object with the following schema:\n\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"courseId\": \"string\",\n    \"examId\": \"string\",\n    \"memberId\": \"string\",\n    \"marksObtained\": 85,\n    \"totalMarks\": 100,\n    \"isPassed\": true,\n    \"answers\": [\n      {\n        \"questionId\": \"string\",\n        \"selectedOptionId\": \"string\",\n        \"isCorrect\": true,\n        \"_id\": \"string\"\n      }\n    ],\n    \"_id\": \"string\",\n    \"createdAt\": \"string\",\n    \"updatedAt\": \"string\",\n    \"__v\": 0\n  },\n  \"message\": \"Exam result fetched successfully\"\n}\n\n ```\n\nThe response includes the submission details, the marks obtained, total marks, whether the member has passed, and details of each question answered.",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{memberToken}}"
+          },
+          {
+            "name": "examId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "courseId": {
+                          "type": "string",
+                          "example": "courseId_example"
+                        },
+                        "examId": {
+                          "type": "string",
+                          "example": "examId_example"
+                        },
+                        "memberId": {
+                          "type": "string",
+                          "example": "memberId_example"
+                        },
+                        "marksObtained": {
+                          "type": "integer",
+                          "example": 85
+                        },
+                        "totalMarks": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "isPassed": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "answers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "questionId": {
+                                "type": "string",
+                                "example": "questionId_example"
+                              },
+                              "selectedOptionId": {
+                                "type": "string",
+                                "example": "selectedOptionId_example"
+                              },
+                              "isCorrect": {
+                                "type": "boolean",
+                                "example": true
+                              },
+                              "_id": {
+                                "type": "string",
+                                "example": "answerId_example"
+                              }
+                            }
+                          }
+                        },
+                        "_id": {
+                          "type": "string",
+                          "example": "resultId_example"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2024-01-01T00:00:00.000Z"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2024-01-01T00:00:00.000Z"
+                        },
+                        "__v": {
+                          "type": "integer",
+                          "example": 0
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Exam result fetched successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authorization token"
+          },
+          "404": {
+            "description": "Not Found - Exam result not found"
+          }
+        }
+      }
     }
   }
 }

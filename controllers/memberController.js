@@ -78,11 +78,18 @@ exports.submitExamAnswer = async (req, res, next) => {
         const { answers } = req.body;
         const memberId = req.user.id;
 
+        // Check if already submitted
+        const isAlreadySubmitted = await Result.findOne({ memberId, examId });
+        if (isAlreadySubmitted) {
+            return next(new BadrequestError('Already submitted'));
+        }
+
         // Fetch the exam details
         const exam = await Exam.findById(examId);
         if (!exam) {
             return next(new NotFoundError('Exam not found'));
         }
+        
         // Calculate score
         let totalMarks = 0;
         let obtainedMarks = 0;
@@ -120,5 +127,27 @@ exports.submitExamAnswer = async (req, res, next) => {
     } catch (error) {
         console.log('\x1b[31m', error);
         next(new UnhandledError('Error while submitting exam.'));
+    }
+};
+
+/**
+ * This function is used to get the result of a member
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
+exports.getResult = async (req, res, next) => {
+    const memberId = req.user.id;
+    const examId = req.params.examId;
+    try {
+        const results = await Result.find({ memberId, examId }).populate('courseId');
+        if (!results) {
+            return next(new NotFoundError('No results found'));
+        }
+        return sendSuccess(res, results, 'Results fetched successfully', 200);
+    } catch (error) {
+        console.log('\x1b[31m', error);
+        next(new UnhandledError('Error while fetching results.'));
     }
 };
