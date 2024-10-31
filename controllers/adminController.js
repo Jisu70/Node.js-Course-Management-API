@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const Course = require('../models/Course');
 const Exam = require('../models/Exam');
 const User = require('../models/User');
+const Result = require('../models/Result');
 /**
  * This function is used to create a course
  * @param {*} req 
@@ -69,6 +70,14 @@ exports.assignCourseToMember = async (req, res, next) => {
             return next(new NotFoundError('Course not found'));
         }
 
+        if (course.assignedMembers.includes(memberId)) {
+            return next(new BadrequestError('Course already assigned to member.'));
+        }
+        const isMember = await User.findOne({ _id: memberId, role: 'member' });
+
+        if (!isMember) {
+            return next(new NotFoundError('Member not found'));
+        }
         course.assignedMembers.push(memberId);
         await course.save();
         return sendSuccess(res, [], 'Course assigned to member', 201);
@@ -146,5 +155,22 @@ exports.getAllExams = async (req, res, next) => {
     } catch (error) {
         console.log('\x1b[31m', error);
         next(new UnhandledError('Error while fetching exams.'));
+    }
+}
+
+exports.getExamResult = async (req, res, next) => {
+    const memberId = req.user.id;
+    const examId = req.params.examId;
+
+    console.log(memberId, examId);
+    try {
+        const results = await Result.find({ memberId, examId });
+        if (!results || results.length === 0) {
+            return next(new NotFoundError('No results found'));
+        }
+        return sendSuccess(res, results, 'Results fetched successfully', 200);
+    } catch (error) {
+        console.log('\x1b[31m', error);
+        next(new UnhandledError('Error while fetching results.'));
     }
 }

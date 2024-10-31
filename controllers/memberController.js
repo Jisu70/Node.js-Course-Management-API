@@ -74,22 +74,25 @@ exports.getExamsForCourse = async (req, res, next) => {
  */
 exports.submitExamAnswer = async (req, res, next) => {
     try {
-        const { examId } = req.params;
+        const { courseId, examId } = req.params;
         const { answers } = req.body;
         const memberId = req.user.id;
 
         // Check if already submitted
-        const isAlreadySubmitted = await Result.findOne({ memberId, examId });
+        const isAlreadySubmitted = await Result.findOne({ courseId, memberId, examId });
         if (isAlreadySubmitted) {
             return next(new BadrequestError('Already submitted'));
         }
-
         // Fetch the exam details
         const exam = await Exam.findById(examId);
         if (!exam) {
             return next(new NotFoundError('Exam not found'));
         }
-        
+        // Find the course details
+        const isValidCourse = await Course.find({ _id: courseId, assignedMembers: memberId, exams: examId });
+        if (!isValidCourse) {
+            return next(new NotFoundError('Mismatch found'));
+        }
         // Calculate score
         let totalMarks = 0;
         let obtainedMarks = 0;
@@ -113,7 +116,7 @@ exports.submitExamAnswer = async (req, res, next) => {
         const isPassed = obtainedMarks >= exam.passMarks;
         // Save the result
         const result = new Result({
-            courseId: exam._id,
+            courseId: courseId,
             examId,
             memberId,
             marksObtained : obtainedMarks,

@@ -10,7 +10,7 @@ router.use(authorizeUser);
 router.use(authorizeMember);
 
 // Post routes
-router.post('/exams/:examId/submit', submitExamAnswerValidators, validationHandler, submitExamAnswer);
+router.post('/exams/:courseId/:examId/submit', submitExamAnswerValidators, validationHandler, submitExamAnswer);
 
 // Get routes
 router.get('/courses', getCoursesForMember);

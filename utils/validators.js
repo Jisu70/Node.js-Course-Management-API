@@ -117,7 +117,7 @@ const assignCourseValidators = [
         .withMessage("Course ID is required")
         .isMongoId()
         .withMessage("Invalid course ID, should be a mongo ID"),
-    check("examId")
+    check("memberId")
         .notEmpty()
         .withMessage("Exam ID is required")
         .isMongoId()
@@ -139,4 +139,17 @@ const getExamResultValidators = [
         .isMongoId()
         .withMessage("Invalid exam ID, should be a mongo ID")
 ]
-module.exports = { signupValidators, submitExamAnswerValidators, loginValidators, createCourseValidators, createExamValidators, assignCourseValidators, getExamsForCourseValidators, getExamResultValidators }
+
+const getMemberResultValidators = [
+    check("memberId")
+        .notEmpty()
+        .withMessage("Member ID is required")
+        .isMongoId()
+        .withMessage("Invalid member ID, should be a mongo ID"),
+    check("examId")
+        .notEmpty()
+        .withMessage("Exam ID is required")
+        .isMongoId()
+        .withMessage("Invalid exam ID, should be a mongo ID")
+]
+module.exports = { signupValidators, submitExamAnswerValidators, loginValidators, createCourseValidators, createExamValidators, assignCourseValidators, getExamsForCourseValidators, getExamResultValidators, getMemberResultValidators }
