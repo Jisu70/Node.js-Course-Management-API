@@ -157,12 +157,17 @@ exports.getAllExams = async (req, res, next) => {
         next(new UnhandledError('Error while fetching exams.'));
     }
 }
-
+/**
+ * This function is used to get exam result by memberId and examId
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 exports.getExamResult = async (req, res, next) => {
-    const memberId = req.user.id;
+    const memberId = req.params.memberId;
     const examId = req.params.examId;
 
-    console.log(memberId, examId);
     try {
         const results = await Result.find({ memberId, examId });
         if (!results || results.length === 0) {
