@@ -1,5 +1,5 @@
 
-# Fort Mindz Assignment
+# Node.js-Course-Management-API
 
 
 ## Table of Contents
@@ -19,7 +19,7 @@
    npm install
    ```
 
-## environment-variables
+## Environment-variables
 
 1. Set up environment variables by creating a `.env` a reference .env.copy for reference.
 ```plaintext
@@ -27,7 +27,7 @@ MONGO_CONNECTION_STRING=mongodb://localhost:****  # Add your MongoDB connection 
 JWT_SECRET=your_jwt_secret                        # Secret key for JWT token generation
 PORT=****                                         # Define the port to run the server
 ```
-## scripts
+## Scripts
 
 1. Run the project:
    - Development mode: `npm run dev` -- Run with nodemon
