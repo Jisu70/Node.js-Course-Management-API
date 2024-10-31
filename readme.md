@@ -7,7 +7,6 @@
 - [Setup](#setup)
 - [Environment Variables](#environment-variables)
 - [Scripts](#scripts)
-- [Available Routes](#available-routes)
 - [API Documentation](#api-documentation)
 - [Technologies Used](#technologies-used)
 
@@ -19,13 +18,18 @@
    ```bash
    npm install
    ```
-3. Set up environment variables by creating a `.env` a reference .env.copy for reference.
+
+## environment-variables
+
+1. Set up environment variables by creating a `.env` a reference .env.copy for reference.
 ```plaintext
 MONGO_CONNECTION_STRING=mongodb://localhost:****  # Add your MongoDB connection string without trailing '/'
 JWT_SECRET=your_jwt_secret                        # Secret key for JWT token generation
 PORT=5000                                         # Define the port to run the server
 ```
-4. Run the project:
+## scripts
+
+1. Run the project:
    - Development mode: `npm run dev` -- Run with nodemon
    - Production mode: `npm run prod` -- Run with node
 
@@ -33,7 +37,7 @@ PORT=5000                                         # Define the port to run the s
 > **Note**: The MongoDB database will automatically be created upon connection with the hardcoded name `fort-mindz-assignment`.
 
 
-## Available Routes
+## API Documentation
 
 1. **Home Route** - Check if the project is running correctly:
    - **GET** `http://localhost:5000/`
@@ -49,11 +53,7 @@ PORT=5000                                         # Define the port to run the s
    - **GET** `http://localhost:5000/check-database-connection`
    - Expected response: `"Database connection successful!"`
 
-## API Documentation
-
-The API is documented using Swagger. After starting the project, access the API docs at:
-
-- **Swagger Documentation**: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
+- Swagger Documentation : [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
 
 ## Technologies Used
 
